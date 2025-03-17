@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# Check if process name is provided
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <process-name>"
+    exit 1
+fi
+
+PROCESS_NAME=$1
+
+# Get process IDs (PIDs) matching the process name
+PIDS=$(ps -ax | grep "${PROCESS_NAME}" | grep -v "grep" | awk '{print $1}')
+
+# Check if any processes were found
+if [ -z "$PIDS" ]; then
+    echo "No processes found matching: $PROCESS_NAME"
+    exit 1
+fi
+
+# Kill each process found
+for PID in $PIDS; do
+    echo "Killing process $PID ($PROCESS_NAME)"
+    kill $PID
+done
+
+echo "All matching processes terminated."
